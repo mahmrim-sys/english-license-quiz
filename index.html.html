@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختبار الرخصة المهنية - لغة إنجليزية 2 | نموذج إلكتروني</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    header {
+      background: linear-gradient(90deg, #0d47a1, #1565c0);
+      color: white;
+      padding: 25px 30px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    header p { opacity: 0.9; font-size: 0.95rem; }
+    .progress-bar {
+      height: 8px;
+      background: #e0e0e0;
+      width: 100%;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #4caf50;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .quiz-body { padding: 30px; }
+    .question-card {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .question-card.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .q-number {
+      display: inline-block;
+      background: #1565c0;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 36px;
+      font-weight: bold;
+      margin-left: 12px;
+    }
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 15px 0 25px;
+      color: #1a237e;
+      line-height: 1.7;
+    }
+    .options label {
+      display: block;
+      background: #f5f7fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+    }
+    .options label:hover {
+      border-color: #1565c0;
+      background: #e3f2fd;
+    }
+    .options input[type="radio"] {
+      margin-left: 12px;
+      transform: scale(1.2);
+    }
+    .options input[type="radio"]:checked + span {
+      font-weight: 600;
+      color: #0d47a1;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 15px;
+    }
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-prev {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .btn-prev:hover { background: #bdbdbd; }
+    .btn-next, .btn-submit {
+      background: #1565c0;
+      color: white;
+    }
+    .btn-next:hover, .btn-submit:hover {
+      background: #0d47a1;
+      transform: translateY(-2px);
+    }
+    .btn-submit { background: #2e7d32; }
+    .btn-submit:hover { background: #1b5e20; }
+    #results {
+      display: none;
+      text-align: center;
+      padding: 40px 30px;
+    }
+    .score-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 25px;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(46,125,50,0.4);
+    }
+    .score-circle span { font-size: 1rem; font-weight: normal; opacity: 0.9; }
+    .result-message { font-size: 1.3rem; margin-bottom: 20px; color: #1a237e; }
+    .review-section {
+      text-align: right;
+      margin-top: 30px;
+      max-height: 500px;
+      overflow-y: auto;
+      border-top: 2px solid #eee;
+      padding-top: 20px;
+    }
+    .review-item {
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-right: 5px solid #ccc;
+    }
+    .review-item.correct { border-right-color: #4caf50; }
+    .review-item.wrong { border-right-color: #f44336; }
+    .review-item .q { font-weight: 600; margin-bottom: 8px; }
+    .review-item .user { color: #666; }
+    .review-item .correct-ans { color: #2e7d32; font-weight: 600; }
+    .restart-btn {
+      margin-top: 25px;
+      background: #1565c0;
+      color: white;
+      padding: 14px 40px;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #f5f5f5;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    @media (max-width: 600px) {
+      .quiz-body { padding: 20px 15px; }
+      header h1 { font-size: 1.3rem; }
+      .question-text { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>اختبار الرخصة المهنية – لغة إنجليزية 2</h1>
+      <p>نموذج تدريبي إلكتروني كامل (88 سؤالاً) | هيئة تقويم التعليم والتدريب</p>
+    </header>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="quiz-body" id="quiz">
+      <!-- Questions will be injected here -->
+    </div>
+
+    <div id="results">
+      <div class="score-circle" id="scoreDisplay">
+        <div id="scoreValue">0</div>
+        <span>من 88</span>
+      </div>
+      <div class="result-message" id="resultMsg"></div>
+      <button class="restart-btn" onclick="location.reload()">إعادة الاختبار</button>
+      <div class="review-section" id="review"></div>
+    </div>
+
+    <footer>
+      نموذج تدريبي أصلي | صُمم للتدريب على اختبار الرخصة المهنية لغة إنجليزية 2
+    </footer>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "In order to improve students’ listening comprehension, the input should be:",
+        options: ["Far above their current level", "Slightly above their current level (i+1)", "Exactly at their current level", "Below their current level"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of formative assessment?",
+        options: ["Final end-of-term exam", "Continuous classroom observation and feedback", "Standardized national test", "Placement test"],
+        correct: 1
+      },
+      {
+        q: "The Communicative Approach focuses mainly on:",
+        options: ["Grammar rules and accuracy", "Meaningful interaction and real-life communication", "Translation between L1 and L2", "Memorization of vocabulary lists"],
+        correct: 1
+      },
+      {
+        q: "The theory that suggests all languages share a set of universal principles is called:",
+        options: ["Behaviorism", "Universal Grammar", "Sociocultural Theory", "Connectionism"],
+        correct: 1
+      },
+      {
+        q: "Which activity is most suitable for developing reading for the main idea?",
+        options: ["Underlining every unknown word", "Writing a one-sentence summary of the text", "Translating the whole text", "Focusing only on grammar structures"],
+        correct: 1
+      },
+      {
+        q: "The suffix “-able” in the word “portable” is an example of:",
+        options: ["Inflectional morphology", "Derivational morphology", "Phonology", "Syntax"],
+        correct: 1
+      },
+      {
+        q: "According to Krashen’s Input Hypothesis, acquisition occurs when learners:",
+        options: ["Are forced to produce language immediately", "Receive comprehensible input slightly beyond their current level", "Memorize grammatical rules", "Practice drills repeatedly"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a top-down listening strategy?",
+        options: ["Focusing on individual sounds", "Using background knowledge and context to understand the message", "Transcribing every word", "Identifying stress patterns only"],
+        correct: 1
+      },
+      {
+        q: "A less stressful alternative to traditional essay writing for secondary students is:",
+        options: ["Timed formal composition only", "Collaborative writing or diary writing", "Grammar transformation exercises", "Copying model texts"],
+        correct: 1
+      },
+      {
+        q: "Competency-based language teaching focuses on:",
+        options: ["What students can actually do with the language", "How many grammar rules they know", "The number of vocabulary items memorized", "Perfect pronunciation only"],
+        correct: 0
+      },
+      {
+        q: "Which sentence has correct subject-verb agreement?",
+        options: ["Neither the students nor the teacher are available.", "Neither the students nor the teacher is available.", "Neither the students nor the teacher were available.", "Neither the students nor the teacher be available."],
+        correct: 1
+      },
+      {
+        q: "In lesson planning, the warm-up stage is mainly used to:",
+        options: ["Test previous knowledge formally", "Activate prior knowledge and motivate students", "Introduce the final assessment", "Give homework"],
+        correct: 1
+      },
+      {
+        q: "The term “interlanguage” refers to:",
+        options: ["The learner’s developing linguistic system that is neither L1 nor L2", "Perfect native-like competence", "Only the first language influence", "Official bilingual education"],
+        correct: 0
+      },
+      {
+        q: "Which assessment type measures what students have learned at the end of a unit?",
+        options: ["Diagnostic assessment", "Formative assessment", "Summative assessment", "Placement assessment"],
+        correct: 2
+      },
+      {
+        q: "Students produce correct forms in controlled practice but make errors in free speaking. This is most likely due to:",
+        options: ["Lack of declarative knowledge", "Insufficient proceduralization / automatization", "Poor vocabulary knowledge only", "Bad classroom management"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a pragmatic competence?",
+        options: ["Knowing the past tense of irregular verbs", "Knowing when and how to apologize appropriately", "Knowing the phonetic transcription of words", "Knowing the definition of a noun"],
+        correct: 1
+      },
+      {
+        q: "The best way to teach vocabulary in context is through:",
+        options: ["Isolated word lists", "Authentic texts and meaningful tasks", "Dictionary copying", "Translation only"],
+        correct: 1
+      },
+      {
+        q: "Which approach emphasizes the importance of noticing the gap between one’s interlanguage and the target language?",
+        options: ["Grammar-Translation", "Noticing Hypothesis (Schmidt)", "Audio-Lingual Method", "Suggestopedia"],
+        correct: 1
+      },
+      {
+        q: "A teacher asks students to rearrange jumbled sentences to form a coherent paragraph. This activity mainly develops:",
+        options: ["Listening skills", "Discourse competence / cohesion", "Pronunciation", "Spelling"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a bottom-up processing strategy in reading?",
+        options: ["Predicting the content from the title", "Decoding individual words and letters", "Using world knowledge", "Guessing the writer’s purpose"],
+        correct: 1
+      },
+      {
+        q: "The primary focus of Task-Based Language Teaching (TBLT) is:",
+        options: ["Completing meaningful tasks using language", "Memorizing grammar rules", "Perfect accuracy from the beginning", "Translation exercises"],
+        correct: 0
+      },
+      {
+        q: "Which of the following best describes “scaffolding” in language teaching?",
+        options: ["Giving students complete independence from the start", "Providing temporary support that is gradually withdrawn", "Testing students without preparation", "Focusing only on errors"],
+        correct: 1
+      },
+      {
+        q: "The sound /θ/ in “think” is:",
+        options: ["A voiced dental fricative", "A voiceless dental fricative", "A voiced alveolar stop", "A voiceless bilabial stop"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a closed question?",
+        options: ["What do you think about the story?", "Did you like the story?", "How would you change the ending?", "Why did the character act that way?"],
+        correct: 1
+      },
+      {
+        q: "According to Vygotsky, learning occurs most effectively in the:",
+        options: ["Zone of Proximal Development (ZPD)", "Zone of Actual Development only", "Independent practice stage", "Silent period"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is a characteristic of authentic materials?",
+        options: ["They are specially written for language learners", "They are produced for real-life communication purposes", "They contain only simplified language", "They focus only on grammar"],
+        correct: 1
+      },
+      {
+        q: "The process of simplifying language when talking to language learners is called:",
+        options: ["Foreigner talk / Teacher talk", "Code-switching", "Fossilization", "Transfer"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of positive transfer?",
+        options: ["An Arabic speaker saying “I have 20 years” instead of “I am 20 years old”", "An Arabic speaker correctly using the present continuous because it exists in Arabic", "Omitting the verb “to be”", "Using double negatives"],
+        correct: 1
+      },
+      {
+        q: "A good learning objective should be:",
+        options: ["Vague and general", "Specific, measurable, achievable, relevant, and time-bound (SMART)", "Focused only on the teacher’s actions", "Written in the past tense"],
+        correct: 1
+      },
+      {
+        q: "Which of the following techniques is most suitable for correcting spoken errors without interrupting fluency?",
+        options: ["Immediate explicit correction", "Recasting", "Stopping the student every time", "Writing the error on the board immediately"],
+        correct: 1
+      },
+      {
+        q: "The study of how context influences the interpretation of meaning is called:",
+        options: ["Phonetics", "Pragmatics", "Morphology", "Syntax"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a receptive skill?",
+        options: ["Speaking", "Writing", "Reading", "Both A and B"],
+        correct: 2
+      },
+      {
+        q: "In the Audio-Lingual Method, the main technique used is:",
+        options: ["Free conversation", "Pattern drills and repetition", "Translation", "Silent reading"],
+        correct: 1
+      },
+      {
+        q: "Which of the following best describes “fossilization”?",
+        options: ["The permanent incorporation of incorrect forms into a learner’s interlanguage", "The complete mastery of the target language", "The temporary forgetting of vocabulary", "The process of learning a third language"],
+        correct: 0
+      },
+      {
+        q: "A teacher wants to check students’ understanding of a text quickly. The most efficient way is:",
+        options: ["Asking them to write a full summary", "Using true/false or multiple-choice questions", "Asking them to translate the whole text", "Leaving them to discuss freely without guidance"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a content word?",
+        options: ["the", "and", "quickly", "of"],
+        correct: 2
+      },
+      {
+        q: "The best way to develop students’ critical thinking in reading is through:",
+        options: ["Multiple-choice questions only", "Open-ended questions that require analysis and evaluation", "Copying the text", "Reading aloud"],
+        correct: 1
+      },
+      {
+        q: "Which theory emphasizes the role of social interaction in language learning?",
+        options: ["Behaviorism", "Sociocultural Theory (Vygotsky)", "Innatism only", "Connectionism"],
+        correct: 1
+      },
+      {
+        q: "A “needs analysis” in language teaching is used to:",
+        options: ["Decide the teacher’s salary", "Identify learners’ language needs and goals", "Test grammar only", "Choose the classroom decoration"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a feature of good classroom management?",
+        options: ["Ignoring student behavior", "Establishing clear routines and expectations", "Allowing complete chaos", "Focusing only on the strongest students"],
+        correct: 1
+      },
+      {
+        q: "The term “collocation” refers to:",
+        options: ["Words that frequently occur together", "The opposite of a word", "The phonetic transcription", "The grammatical category of a word"],
+        correct: 0
+      },
+      {
+        q: "Which of the following activities best develops fluency?",
+        options: ["Controlled gap-fill exercises", "Free discussion or role-play with time pressure", "Grammar explanation", "Dictation"],
+        correct: 1
+      },
+      {
+        q: "According to the Affective Filter Hypothesis (Krashen), high anxiety:",
+        options: ["Facilitates language acquisition", "Raises the filter and blocks input", "Has no effect", "Improves accuracy only"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a formative feedback technique?",
+        options: ["Giving only a final grade", "Using “two stars and a wish”", "Comparing students publicly", "Ignoring errors completely"],
+        correct: 1
+      },
+      {
+        q: "The smallest unit of meaning in a language is called a:",
+        options: ["Phoneme", "Morpheme", "Syllable", "Sentence"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a disadvantage of the Grammar-Translation Method?",
+        options: ["It develops speaking skills effectively", "It neglects oral communication and real-life use", "It focuses on authentic materials", "It encourages interaction"],
+        correct: 1
+      },
+      {
+        q: "A teacher asks students to predict the content of a text from the title and pictures. This is an example of:",
+        options: ["Bottom-up strategy", "Top-down strategy", "Intensive reading only", "Skimming for specific information"],
+        correct: 1
+      },
+      {
+        q: "Which of the following best describes “extensive reading”?",
+        options: ["Reading short difficult texts carefully", "Reading large amounts of easy, enjoyable material", "Translating every word", "Focusing only on grammar"],
+        correct: 1
+      },
+      {
+        q: "The process of adapting teaching to individual differences is called:",
+        options: ["Differentiation", "Standardization", "Homogenization", "Fossilization"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of a performance-based assessment?",
+        options: ["Multiple-choice grammar test", "Oral presentation or role-play", "True/false quiz", "Matching exercise"],
+        correct: 1
+      },
+      {
+        q: "The term “code-switching” refers to:",
+        options: ["Changing from one language or variety to another in the same conversation", "Making grammar mistakes", "Translating word for word", "Using only the target language"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is a characteristic of the Direct Method?",
+        options: ["Heavy use of translation", "Teaching exclusively in the target language", "Focus on written literature", "Memorization of rules"],
+        correct: 1
+      },
+      {
+        q: "A good way to teach pronunciation of minimal pairs is through:",
+        options: ["Listening discrimination activities", "Writing essays", "Translating texts", "Silent reading"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of a learning strategy?",
+        options: ["Guessing meaning from context", "The teacher’s explanation", "The textbook design", "The classroom size"],
+        correct: 0
+      },
+      {
+        q: "According to Bloom’s Taxonomy, the highest level of thinking is:",
+        options: ["Remembering", "Understanding", "Creating / Evaluating", "Applying"],
+        correct: 2
+      },
+      {
+        q: "Which of the following best describes “washback”?",
+        options: ["The effect of testing on teaching and learning", "The process of washing the blackboard", "Students’ motivation only", "The teacher’s salary"],
+        correct: 0
+      },
+      {
+        q: "The best way to deal with mixed-ability classes is:",
+        options: ["Teaching only to the average level", "Using differentiated tasks and flexible grouping", "Ignoring weaker students", "Giving the same task to everyone without support"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a feature of academic language?",
+        options: ["Informal vocabulary and contractions", "Precise vocabulary, complex structures, and objectivity", "Slang and idioms only", "Short incomplete sentences"],
+        correct: 1
+      },
+      {
+        q: "A teacher uses a song to introduce new vocabulary. This is an example of:",
+        options: ["Using affective and multi-sensory input", "Focusing only on grammar", "Avoiding authentic materials", "Testing listening only"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of a metacognitive strategy?",
+        options: ["Planning how to approach a reading task", "Looking up every word in a dictionary", "Repeating words aloud", "Copying the text"],
+        correct: 0
+      },
+      {
+        q: "The term “register” in language refers to:",
+        options: ["The level of formality of language according to context", "The phonetic alphabet", "The number of synonyms", "The speed of speech"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is most important when giving instructions?",
+        options: ["Using complex sentences", "Being clear, concise, and checking understanding", "Speaking very fast", "Using only the mother tongue"],
+        correct: 1
+      },
+      {
+        q: "According to the Interaction Hypothesis (Long), language acquisition is facilitated by:",
+        options: ["Silent listening only", "Negotiation of meaning through interaction", "Grammar drills only", "Translation"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a product-oriented approach to writing?",
+        options: ["Focusing on the final written text and accuracy", "Emphasizing the process of planning, drafting, and revising", "Ignoring organization", "Allowing free writing without feedback"],
+        correct: 0
+      },
+      {
+        q: "A teacher notices that students overgeneralize the past tense rule (e.g., “goed”). This is an example of:",
+        options: ["Positive transfer", "Developmental error / overgeneralization", "Fossilization only", "Lack of motivation"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a good way to increase student talking time (STT)?",
+        options: ["Teacher lectures most of the time", "Pair work, group work, and open-ended questions", "Reading aloud only", "Writing quietly"],
+        correct: 1
+      },
+      {
+        q: "The study of speech sounds is called:",
+        options: ["Morphology", "Phonetics / Phonology", "Semantics", "Pragmatics"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is an example of a criterion-referenced test?",
+        options: ["A test that ranks students against each other", "A test that measures performance against specific learning objectives", "An IQ test", "A placement test only"],
+        correct: 1
+      },
+      {
+        q: "A teacher uses real objects (realia) to teach vocabulary. This helps mainly with:",
+        options: ["Making meaning concrete and memorable", "Focusing only on abstract concepts", "Avoiding visual support", "Testing writing"],
+        correct: 0
+      },
+      {
+        q: "Which of the following best describes “noticing” in second language acquisition?",
+        options: ["Consciously paying attention to language features in the input", "Ignoring errors", "Translating everything", "Speaking without thinking"],
+        correct: 0
+      },
+      {
+        q: "The best way to assess listening comprehension without testing memory is:",
+        options: ["Asking students to recall every detail", "Using while-listening tasks (e.g., completing a table)", "Giving a long lecture and testing afterwards", "Asking for a full transcription"],
+        correct: 1
+      },
+      {
+        q: "Which of the following is a characteristic of effective error correction?",
+        options: ["Correcting every single error immediately", "Selecting errors based on the lesson focus and learner readiness", "Ignoring all errors", "Correcting only written work"],
+        correct: 1
+      },
+      {
+        q: "The term “discourse” refers to:",
+        options: ["Language beyond the sentence level (connected speech or writing)", "Single words only", "Phonemes", "Individual sounds"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of inductive grammar teaching?",
+        options: ["Giving the rule first, then examples", "Giving examples first and guiding students to discover the rule", "Translating the rule", "Avoiding grammar completely"],
+        correct: 1
+      },
+      {
+        q: "A teacher wants to develop students’ ability to write formal emails. The most appropriate approach is:",
+        options: ["Focusing on process and genre features", "Free creative writing only", "Copying informal messages", "Ignoring organization"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is a benefit of pair work?",
+        options: ["Increases student talking time and reduces anxiety", "Allows the teacher to lecture more", "Makes the class noisier without purpose", "Focuses only on the strongest students"],
+        correct: 0
+      },
+      {
+        q: "The process of simplifying complex language structures for learners is part of:",
+        options: ["Teacher talk / Comprehensible input", "Fossilization", "Code-switching only", "Testing"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of a diagnostic assessment?",
+        options: ["A test given at the beginning to identify strengths and weaknesses", "A final exam", "Continuous feedback only", "A national standardized test"],
+        correct: 0
+      },
+      {
+        q: "According to the Output Hypothesis (Swain), producing language helps learners:",
+        options: ["Notice gaps in their knowledge", "Avoid speaking", "Focus only on input", "Memorize rules"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is a feature of a well-designed lesson plan?",
+        options: ["Clear objectives, stages, timing, and assessment", "No clear stages", "Focusing only on the teacher", "Ignoring students’ needs"],
+        correct: 0
+      },
+      {
+        q: "The term “homophone” refers to:",
+        options: ["Words that sound the same but have different meanings/spellings", "Words that look the same but sound different", "Opposite words", "Synonyms"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is most effective for developing critical reading skills?",
+        options: ["Asking students to evaluate the author’s arguments", "Asking only for factual recall", "Translating the text", "Reading silently without discussion"],
+        correct: 0
+      },
+      {
+        q: "A teacher uses peer assessment. This mainly develops:",
+        options: ["Students’ ability to evaluate work against criteria", "Dependence on the teacher only", "Competition without learning", "Ignoring quality"],
+        correct: 0
+      },
+      {
+        q: "Which of the following best describes “automaticity” in language learning?",
+        options: ["Performing language skills quickly and without conscious effort", "Thinking about every rule while speaking", "Avoiding practice", "Focusing only on accuracy"],
+        correct: 0
+      },
+      {
+        q: "The best way to introduce a new grammar structure is usually:",
+        options: ["Through meaningful context first", "By giving the rule in isolation", "By translating it immediately", "By testing it first"],
+        correct: 0
+      },
+      {
+        q: "Which of the following is an example of a productive skill?",
+        options: ["Listening", "Reading", "Writing", "Both A and B"],
+        correct: 2
+      },
+      {
+        q: "A teacher notices that students use L1 excessively during group work. An effective strategy is:",
+        options: ["Setting clear expectations and monitoring", "Banning group work completely", "Ignoring the issue", "Speaking only in L1"],
+        correct: 0
+      },
+      {
+        q: "The ultimate goal of language teaching according to the communicative approach is:",
+        options: ["Native-like accuracy in all situations", "Communicative competence (ability to use language appropriately and effectively)", "Perfect knowledge of grammar rules only", "Ability to translate literary texts"],
+        correct: 1
+      }
+    ];
+
+    let current = 0;
+    let answers = new Array(questions.length).fill(null);
+
+    const quizEl = document.getElementById('quiz');
+    const progressEl = document.getElementById('progress');
+    const resultsEl = document.getElementById('results');
+
+    function renderQuestion() {
+      const q = questions[current];
+      let html = `
+        <div class="question-card active">
+          <div>
+            <span class="q-number">${current + 1}</span>
+            <span style="color:#666;font-size:0.9rem;">من ${questions.length}</span>
+          </div>
+          <div class="question-text">${q.q}</div>
+          <div class="options">
+      `;
+      q.options.forEach((opt, i) => {
+        const checked = answers[current] === i ? 'checked' : '';
+        html += `
+          <label>
+            <input type="radio" name="q${current}" value="${i}" ${checked} onchange="selectAnswer(${i})">
+            <span>${String.fromCharCode(65 + i)}) ${opt}</span>
+          </label>
+        `;
+      });
+      html += `
+          </div>
+          <div class="nav-buttons">
+            <button class="btn-prev" onclick="prevQ()" ${current === 0 ? 'disabled style="opacity:0.5"' : ''}>السابق</button>
+            ${current === questions.length - 1 
+              ? '<button class="btn-submit" onclick="submitQuiz()">تسليم الاختبار</button>'
+              : '<button class="btn-next" onclick="nextQ()">التالي</button>'}
+          </div>
+        </div>
+      `;
+      quizEl.innerHTML = html;
+      updateProgress();
+    }
+
+    function selectAnswer(idx) {
+      answers[current] = idx;
+    }
+
+    function nextQ() {
+      if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+      }
+    }
+
+    function prevQ() {
+      if (current > 0) {
+        current--;
+        renderQuestion();
+      }
+    }
+
+    function updateProgress() {
+      const percent = ((current + 1) / questions.length) * 100;
+      progressEl.style.width = percent + '%';
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      let reviewHtml = '<h3 style="margin-bottom:15px;color:#1a237e;">مراجعة الإجابات</h3>';
+
+      questions.forEach((q, i) => {
+        const userAns = answers[i];
+        const isCorrect = userAns === q.correct;
+        if (isCorrect) score++;
+
+        reviewHtml += `
+          <div class="review-item ${isCorrect ? 'correct' : 'wrong'}">
+            <div class="q">${i + 1}. ${q.q}</div>
+            <div class="user">إجابتك: ${userAns !== null ? String.fromCharCode(65 + userAns) + ') ' + q.options[userAns] : 'لم تجب'}</div>
+            ${!isCorrect ? `<div class="correct-ans">الإجابة الصحيحة: ${String.fromCharCode(65 + q.correct)}) ${q.options[q.correct]}</div>` : ''}
+          </div>
+        `;
+      });
+
+      document.getElementById('scoreValue').textContent = score;
+      const percent = Math.round((score / questions.length) * 100);
+      let msg = '';
+      if (percent >= 80) msg = 'ممتاز! أداء قوي جداً 👏';
+      else if (percent >= 65) msg = 'جيد جداً، استمر في التدريب 💪';
+      else if (percent >= 50) msg = 'مقبول، ركز على نقاط الضعف';
+      else msg = 'تحتاج مزيداً من المراجعة والتدريب';
+
+      document.getElementById('resultMsg').textContent = `درجتك: ${score} من 88 (${percent}%) — ${msg}`;
+      document.getElementById('review').innerHTML = reviewHtml;
+
+      quizEl.style.display = 'none';
+      resultsEl.style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    // Start
+    renderQuestion();
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"db64ab67c8fd450aae9f70f73677cbe8","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
